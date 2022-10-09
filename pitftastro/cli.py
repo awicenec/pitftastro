@@ -1,28 +1,24 @@
-"""CLI interface for pitftastro project.
+#!/usr/bin/env python3
 
-Be creative! do whatever you want!
+import logging
+import sys
 
-- Install click or typer and create a CLI app
-- Use builtin argparse
-- Start a web application
-- Import things from your .base module
-"""
+import posix_ipc
 
+logger = logging.getLogger("pitftastro.cli")
 
-def main():  # pragma: no cover
-    """
-    The main function executes on commands:
-    `python -m pitftastro` and `$ pitftastro `.
+if len(sys.argv) < 2:
+    logger.error("No command specified")
+    exit(1)
 
-    This is your program's entry point.
+try:
+    mq = posix_ipc.MessageQueue("/pitftastro_ipc")
+    mq.block = False
+except posix_ipc.PermissionsError:
+    mq = None
+    logger.error("couldn't open message queue")
+    exit(1)
 
-    You can change this function to do whatever you want.
-    Examples:
-        * Run a test suite
-        * Run a server
-        * Do some other stuff
-        * Run a command line application (Click, Typer, ArgParse)
-        * List all available tasks
-        * Run an application (Flask, FastAPI, Django, etc.)
-    """
-    print("This will do something")
+command_line = " ".join(sys.argv[1:])
+
+mq.send(command_line, timeout=10)

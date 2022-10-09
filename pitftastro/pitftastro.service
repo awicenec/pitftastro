@@ -1,0 +1,14 @@
+[Unit]
+Description=PiTFT Astro INDI Display
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/pitftastro/pitftastro.py
+WorkingDirectory=/home/pi/pitftastro
+User=pi
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+

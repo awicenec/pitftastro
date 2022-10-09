@@ -1,85 +1,49 @@
+# PiTFTAstro
 
-# Python Project Template
+This is a display manager for framebuffer devices which will include some apps to display status information from INDI devices on a 3.5" display on a Raspberry Pi.
 
-A low dependency and really simple to start project template for Python Projects.
+## What's a display manager?
 
-See also 
-- [Flask-Project-Template](https://github.com/rochacbruno/flask-project-template/) for a full feature Flask project including database, API, admin interface, etc.
-- [FastAPI-Project-Template](https://github.com/rochacbruno/fastapi-project-template/) The base to start an openapi project featuring: SQLModel, Typer, FastAPI, JWT Token Auth, Interactive Shell, Management Commands.
+Simply put, a display manager is an application that provides other applications with access to the display.
+In practice, this means you can create your own apps for it, switch between apps on the fly, and more!
 
-### HOW TO USE THIS TEMPLATE
+## Why PiTFT?
 
-> **DO NOT FORK** this is meant to be used from **[Use this template](https://github.com/rochacbruno/python-project-template/generate)** feature.
+The Adafruit PiTFT 3.5" is the target device, so I chose to reference it in the name.
 
-1. Click on **[Use this template](https://github.com/rochacbruno/python-project-template/generate)**
-3. Give a name to your project  
-   (e.g. `my_awesome_project` recommendation is to use all lowercase and underscores separation for repo names.)
-3. Wait until the first run of CI finishes  
-   (Github Actions will process the template and commit to your new repo)
-4. If you want [codecov](https://about.codecov.io/sign-up/) Reports and Automatic Release to [PyPI](https://pypi.org)  
-  On the new repository `settings->secrets` add your `PYPI_API_TOKEN` and `CODECOV_TOKEN` (get the tokens on respective websites)
-4. Read the file [CONTRIBUTING.md](CONTRIBUTING.md)
-5. Then clone your new project and happy coding!
+## What apps come with it?
 
-> **NOTE**: **WAIT** until first CI run on github actions before cloning your new project.
+* `system` - displays system information
+* `weather` - displays the current weather
 
-### What is included on this template?
+## Creating apps
 
-- 🖼️ Templates for starting multiple application types:
-  * **Basic low dependency** Python program (default) [use this template](https://github.com/rochacbruno/python-project-template/generate)
-  * **Flask** with database, admin interface, restapi and authentication [use this template](https://github.com/rochacbruno/flask-project-template/generate).
-  **or Run `make init` after cloning to generate a new project based on a template.**
-- 📦 A basic [setup.py](setup.py) file to provide installation, packaging and distribution for your project.  
-  Template uses setuptools because it's the de-facto standard for Python packages, you can run `make switch-to-poetry` later if you want.
-- 🤖 A [Makefile](Makefile) with the most useful commands to install, test, lint, format and release your project.
-- 📃 Documentation structure using [mkdocs](http://www.mkdocs.org)
-- 💬 Auto generation of change log using **gitchangelog** to keep a HISTORY.md file automatically based on your commit history on every release.
-- 🐋 A simple [Containerfile](Containerfile) to build a container image for your project.  
-  `Containerfile` is a more open standard for building container images than Dockerfile, you can use buildah or docker with this file.
-- 🧪 Testing structure using [pytest](https://docs.pytest.org/en/latest/)
-- ✅ Code linting using [flake8](https://flake8.pycqa.org/en/latest/)
-- 📊 Code coverage reports using [codecov](https://about.codecov.io/sign-up/)
-- 🛳️ Automatic release to [PyPI](https://pypi.org) using [twine](https://twine.readthedocs.io/en/latest/) and github actions.
-- 🎯 Entry points to execute your program using `python -m <pitftastro>` or `$ pitftastro` with basic CLI argument parsing.
-- 🔄 Continuous integration using [Github Actions](.github/workflows/) with jobs to lint, test and release your project on Linux, Mac and Windows environments.
+Creating apps is simple, each app is a Python module that provides an `App` class,
+which should inherit from the `apps.AbstractApp` class. Then you just need to implement
+the `run_iteration` method and have it do whatever you want the app to do!
 
-> Curious about architectural decisions on this template? read [ABOUT_THIS_TEMPLATE.md](ABOUT_THIS_TEMPLATE.md)  
-> If you want to contribute to this template please open an [issue](https://github.com/rochacbruno/python-project-template/issues) or fork and send a PULL REQUEST.
+More documentation for development coming soon.
 
-[❤️ Sponsor this project](https://github.com/sponsors/rochacbruno/)
+## Installation
 
-<!--  DELETE THE LINES ABOVE THIS AND WRITE YOUR PROJECT README BELOW -->
+NOTE: This will be changed to use both PyPi and the Makefile. For the 'operational' installation on the Raspberry the systemd service should be put in place.
 
----
-# pitftastro
+* First, clone the repository onto the Raspberry Pi, I recommend cloning it to `~/pitftastro` and then change directory into it.
+* Second, install the required Python libraries.
+* Third, copy the `pitftastro.service` file into `/etc/systemd/system`.
+* Fourth, edit the path in `/etc/systemd/system/pitftastro.service` to the path where you checked out the code
+* Fifth, enable the `systemd` service.
+* Lastly, start the `systemd` service, or reboot.
 
-[![codecov](https://codecov.io/gh/awicenec/pitftastro/branch/main/graph/badge.svg?token=pitftastro_token_here)](https://codecov.io/gh/awicenec/pitftastro)
-[![CI](https://github.com/awicenec/pitftastro/actions/workflows/main.yml/badge.svg)](https://github.com/awicenec/pitftastro/actions/workflows/main.yml)
+Quick command list to install:
 
-Awesome pitftastro created by awicenec
-
-## Install it from PyPI
-
-```bash
-pip install pitftastro
+```shell
+git clone https://github.com/awicenec/pitftastro.git
+cd pitftastro
+sudo pip3 install -r requirements.txt
+sudo cp pitftastro/pitftastro.service /etc/systemd/system/
+sudo nano /etc/systemd/system/pitftastro.service  # don't forget to change the path!
+sudo systemctl daemon-reload
+sudo systemctl enable pitftastro
+sudo systemctl start pitftastro
 ```
-
-## Usage
-
-```py
-from pitftastro import BaseClass
-from pitftastro import base_function
-
-BaseClass().base_method()
-base_function()
-```
-
-```bash
-$ python -m pitftastro
-#or
-$ pitftastro
-```
-
-## Development
-
-Read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
